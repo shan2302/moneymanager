@@ -21,7 +21,7 @@ public interface IncomeRepository extends JpaRepository<IncomeEntity, Long> {
 
 
     @Query("SELECT SUM(i.amount) FROM IncomeEntity i WHERE i.profile.id = :profileId")
-    BigDecimal findTotalExpenseByProfileId(@Param("profileId") Long profileId);
+    BigDecimal findTotalIncomeByProfileId(@Param("profileId") Long profileId);
 
     //Select * from tbl_income where profile_id = ?1 and date between ?2 and ?3 and name like %?4%
     List<IncomeEntity> findByProfileIdAndDateBetweenAndNameContainingIgnoreCase(

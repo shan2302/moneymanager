@@ -10,8 +10,10 @@ import com.shantanu.moneymanager.entity.ProfileEntity;
 import com.shantanu.moneymanager.repository.CategoryRepository;
 import com.shantanu.moneymanager.repository.IncomeRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -41,6 +43,39 @@ public class IncomeService {
         return list.stream().map(this::toDTO).toList();
     }
 
+    //  Delete income by id for current user
+    public void deleteIncome(Long incomeId)
+    {
+        ProfileEntity profile = profileService.getCurrentProfile();
+        IncomeEntity entity = incomeRepository.findById(incomeId)
+                .orElseThrow(() -> new RuntimeException("Income not found"));
+        if(!entity.getProfile().getId().equals(profile.getId()))
+        {
+            throw new RuntimeException("Unauthorized to delete this epense");
+        }
+        incomeRepository.delete(entity);
+    }
+
+    //    Get latest 5 income for current user
+    public List<IncomeDTO> getLatest5IncomeForCurrentUser(){
+        ProfileEntity profile = profileService.getCurrentProfile();
+        List<IncomeEntity> list =incomeRepository.findTop5ByProfileIdOrderByDateDesc(profile.getId());
+        return list.stream().map(this::toDTO).toList();
+    }
+
+    //    Get Total income for current user
+    public BigDecimal getTotalIncomesForCurrentUser(){
+        ProfileEntity profile = profileService.getCurrentProfile();
+        BigDecimal total = incomeRepository.findTotalIncomeByProfileId(profile.getId());
+        return total != null ? total : BigDecimal.ZERO;
+    }
+    //    Filter Incomes
+    public List<IncomeDTO> filterIncomes(LocalDate startDate, LocalDate endDate, String keyword, Sort sort)
+    {
+        ProfileEntity profile= profileService.getCurrentProfile();
+        List<IncomeEntity> list =incomeRepository.findByProfileIdAndDateBetweenAndNameContainingIgnoreCase(profile.getId(),startDate,endDate,keyword,sort);
+        return list.stream().map(this::toDTO).toList();
+    }
     //    Helper methods
     private IncomeEntity toEntity(IncomeDTO dto, ProfileEntity profile, CategoryEntity category)
     {
