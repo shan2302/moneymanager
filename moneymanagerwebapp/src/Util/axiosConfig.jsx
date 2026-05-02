@@ -25,7 +25,7 @@ axiosConfig.interceptors.request.use((config) => {
     if(!shouldSkipToken)
     {
         const accessToken = localStorage.getItem("token");
-        if(accessToken && accessToken !== "undefined" && accessToken !== "null")
+        if(accessToken && accessToken !== "undefined")
         {
             config.headers.Authorization = `Bearer ${accessToken}`;
 
