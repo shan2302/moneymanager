@@ -24,8 +24,10 @@ public class EmailService {
             message.setSubject(subject);
             message.setText(body);
             mailSender.send(message);
+            System.out.println("Email sent successfully to: " + to);
         }catch(Exception e ){
             throw new RuntimeException(e.getMessage());
+            System.err.println("FAILED to send email: " + e.getMessage());
         }
     }
 }
