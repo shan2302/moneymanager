@@ -16,73 +16,47 @@ const Signup = () => {
     const [isLoading, setIsLoading] = useState(false);
 
     const navigate =  useNavigate();
+    
     const handleSubmit = async (e) => {
-    e.preventDefault(); // This MUST be the first line to stop the redirect
-    setIsLoading(true);
-    setError("");
-
-    try {
-        // Validation check
-        if (!validateEmail(email)) {
-            setError("Please enter a valid email");
+        e.preventDefault();
+        setIsLoading(true);
+        setError("");
+        
+        // basic validation
+        if(!fullName.trim())
+        {
+            setError("Please enter your fullName");
             setIsLoading(false);
             return;
         }
+        if(!validateEmail(email))
+        {
+            setError("Please enter valid email address");
+            setIsLoading(false);
+            return;
+        }
+         if(!password.trim())
+        {
+            setError("Please enter your password");
+            setIsLoading(false);
+            return;
+        }
+        setError("");
+        // signup api call
+        try{
+            const response =  await axiosConfig.post(API_ENDPOINTS.REGISTER,{fullName,email,password})
+            if(response.status === 201){
+                toast.success("Profile created successfully.");
+                navigate("/login")
+            }
 
-        const response = await axiosConfig.post(API_ENDPOINTS.REGISTER, {
-            fullName,
-            email,
-            password
-        });
-        
-        // Handle success...
-    } catch (err) {
-        // This keeps the error on the page instead of redirecting
-        setError(err.response?.data?.message || "Registration failed");
-    } finally {
-        setIsLoading(false);
+        }catch(err){
+            console.error("Someething went wrong",err);
+            setError(err.response?.data?.message||err.message || "An error occurred");
+        } finally {
+            setIsLoading(false);
+        }
     }
-};
-    // const handleSubmit = async (e) => {
-    //     e.preventDefault();
-    //     setIsLoading(true);
-    //     setError("");
-        
-    //     // basic validation
-    //     if(!fullName.trim())
-    //     {
-    //         setError("Please enter your fullName");
-    //         setIsLoading(false);
-    //         return;
-    //     }
-    //     if(!validateEmail(email))
-    //     {
-    //         setError("Please enter valid email address");
-    //         setIsLoading(false);
-    //         return;
-    //     }
-    //      if(!password.trim())
-    //     {
-    //         setError("Please enter your password");
-    //         setIsLoading(false);
-    //         return;
-    //     }
-    //     setError("");
-    //     // signup api call
-    //     try{
-    //         const response =  await axiosConfig.post(API_ENDPOINTS.REGISTER,{fullName,email,password})
-    //         if(response.status === 201){
-    //             toast.success("Profile created successfully.");
-    //             navigate("/login")
-    //         }
-
-    //     }catch(err){
-    //         console.error("Someething went wrong",err);
-    //         setError(err.response?.data?.message||err.message || "An error occurred");
-    //     } finally {
-    //         setIsLoading(false);
-    //     }
-    // }
 
     return(
         <div className="h-screen w-full  relative flex items-center justify-center overflow-hidden">
@@ -147,4 +121,4 @@ const Signup = () => {
 
 export default Signup;
 
-// 7:29:01
+// 7:29:59
