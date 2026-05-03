@@ -32,8 +32,18 @@ public class JwtRequestFilter extends OncePerRequestFilter {
         if(authHeader!=null && authHeader.startsWith("Bearer "))
         {
             jwt = authHeader.substring(7);
-            email = jwtUtil.extractUsername(jwt);
+//            email = jwtUtil.extractUsername(jwt);
 
+            try {
+                email = jwtUtil.extractUsername(jwt);
+            } catch (io.jsonwebtoken.ExpiredJwtException e) {
+                // If the token is expired, just log it and move on.
+                // Do NOT throw the exception.
+                logger.warn("JWT token is expired");
+            } catch (Exception e) {
+                // Catches malformed tokens or "Bearer undefined" strings
+                logger.warn("Invalid JWT token received");
+            }
         }
 
         if(email != null && SecurityContextHolder.getContext().getAuthentication() == null)
