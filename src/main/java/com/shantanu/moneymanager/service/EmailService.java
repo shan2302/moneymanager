@@ -1,10 +1,13 @@
 package com.shantanu.moneymanager.service;
 
+import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +37,29 @@ public class EmailService {
             System.out.println("Email sent successfully to: " + to);
         }catch(Exception e ){
             throw new RuntimeException(e.getMessage());
+        }
+    }
+    @Async
+    public void sendEmailWithAttachment(String to, String subject, String body, byte[] attachment, String fileName) {
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+
+            // 'true' flag indicates multipart message (text + attachment)
+            MimeMessageHelper helper = new MimeMessageHelper(message, true);
+
+            helper.setFrom(fromEmail);
+            helper.setTo(to);
+            helper.setSubject(subject);
+            helper.setText(body);
+
+            // Add the Excel file from the byte array
+            helper.addAttachment(fileName, new ByteArrayResource(attachment));
+
+            mailSender.send(message);
+            log.info("Email with attachment sent successfully to: {}", to);
+        } catch (Exception e) {
+            log.error("Failed to send email with attachment: {}", e.getMessage());
+            throw new RuntimeException("Error sending email with attachment: " + e.getMessage());
         }
     }
 }

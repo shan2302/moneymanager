@@ -11,4 +11,25 @@ body {
     .btn-primary {
         @apply w-full bg-violet-600 text-white py-3 rounded-lg font-medium hover:bg-violet-700 transition;
     }
+    .card-btn {
+        @apply flex items-center gap-2 px-3 py-1.5 border border-slate-500 rounded-md 
+           text-sm font-medium text-slate-700 hover:bg-purple-500 transition-colors 
+           active:scale-95 
+           cursor-pointer bg-[#e8f5e9] 
+          
+           border-none;
+    }
+    .card {
+    @apply bg-white border border-gray-100 rounded-xl p-6 shadow-sm;
+    }
+    .add-btn {
+        @apply flex items-center gap-[6px] px-4 py-2 bg-[#e8f5e9] text-[#1b5e20] 
+           border-none rounded-lg font-semibold cursor-pointer 
+           transition-colors duration-200 ease-in-out;
+    }
+
+    .add-btn:hover {
+        @apply bg-[#d4edda];
+    }
+    
 }

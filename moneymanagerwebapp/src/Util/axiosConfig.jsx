@@ -1,7 +1,7 @@
 import axios from "axios";
 import { BASE_URL } from "./apiEndpoints";
 
-const axiosConfig =  axios.create({
+export const axiosConfig =  axios.create({
     baseURL : BASE_URL,
     headers : {
         "Content-Type" : "application/json",
@@ -20,8 +20,9 @@ axiosConfig.interceptors.request.use((config) => {
     // );
     const shouldSkipToken = excludeEndpoints.some((endpoint) => 
     // config.url.toLowerCase().endsWith(endpoint.toLowerCase())
-    config.url?.includes(endpoint)
-    );
+    {   
+        return config.url?.includes(endpoint)
+    });
 
     if(!shouldSkipToken)
     {
